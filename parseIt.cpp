@@ -100,9 +100,9 @@ void parseIt(SamParser *parser) {
 			// flush out previous read's hits if the read is alignable reads
 			if (record_val == 1) {
 				hits.updateRI();
-				nHits += hits.getNHits();
-				nMulti += hits.calcNumGeneMultiReads(gi);
-				nIsoMulti += hits.calcNumIsoformMultiReads();
+				nHits += hits.getNHits();                       // for each read get number of hits 
+				nMulti += hits.calcNumGeneMultiReads(gi);       // get number of gene hits  
+				nIsoMulti += hits.calcNumIsoformMultiReads();   // get number of transcript hits
 				hits.write(hit_out);
 
 				iter = counter.find(hits.getNHits());
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 	sprintf(groupF, "%s.grp", argv[1]);
 	gi.load(groupF);
 	sprintf(tiF, "%s.ti", argv[1]);
-	transcripts.readFrom(tiF);
+	transcripts.readFrom(tiF);          // reads from ref/hg19.ti gene and transcript information saves into vector of Transcript structure
 
 	sprintf(datF, "%s.dat", argv[2]);
 	sprintf(cntF, "%s.cnt", argv[3]);
@@ -196,17 +196,17 @@ int main(int argc, char* argv[]) {
 
 	string firstLine(99, ' ');
 	firstLine.append(1, '\n');		//May be dangerous!
-	hit_out<<firstLine;
+	hit_out<<firstLine;           // save space for first line 
 
 	switch(read_type) {
 	case 0 : parseIt<SingleRead, SingleHit>(parser); break;
 	case 1 : parseIt<SingleReadQ, SingleHit>(parser); break;
 	case 2 : parseIt<PairedEndRead, PairedEndHit>(parser); break;
-	case 3 : parseIt<PairedEndReadQ, PairedEndHit>(parser); break;
+	case 3 : parseIt<PairedEndReadQ, PairedEndHit>(parser); break;  // print nHits, and (.ti index, pos, insert_size) for every hit
 	}
 
-	hit_out.seekp(0, ios_base::beg);
-	hit_out<<N[1]<<" "<<nHits<<" "<<read_type;
+	hit_out.seekp(0, ios_base::beg);            // go back to beginning of file
+	hit_out<<N[1]<<" "<<nHits<<" "<<read_type;  // print number of reads and number of Hits in first line
 
 	hit_out.close();
 

@@ -54,8 +54,8 @@ public:
 private:
 	READ_INT_TYPE n; // n reads in total
 	HIT_INT_TYPE nhits; // # of hits
-	std::vector<HIT_INT_TYPE> s;
-	std::vector<HitType> hits;
+	std::vector<HIT_INT_TYPE> s;        // s vector contains cumulation of nhits for each alignable read
+	std::vector<HitType> hits;          // hits vectore contains the actual hits
 };
 
 //Each time only read one read's hits. If you want to start over, must call clear() first!
@@ -82,9 +82,9 @@ template<class HitType>
 void HitContainer<HitType>::write(std::ostream& out) {
 	if (n <= 0) return;
 	for (READ_INT_TYPE i = 0; i < n; i++) {
-		out<<s[i + 1] - s[i];
-		for (HIT_INT_TYPE j = s[i]; j < s[i + 1]; j++) {
-			hits[j].write(out);
+		out<<s[i + 1] - s[i];                                   // print nhits for this read
+		for (HIT_INT_TYPE j = s[i]; j < s[i + 1]; j++) {        
+			hits[j].write(out);                                   // print hit content (transcript ID index, position, insertsize for paired end reads) 
 		}
 		out<<std::endl;
 	}

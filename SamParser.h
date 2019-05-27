@@ -50,7 +50,7 @@ public:
 private:
 	samFile *sam_in;
 	bam_hdr_t *header;
-	bam1_t *b, *b2;
+	bam1_t *b, *b2;                   //structure for one alignment, defined in HTSLib
 
 	Transcripts& transcripts;
 
@@ -97,8 +97,8 @@ SamParser::SamParser(const char* inpF, const char* aux, Transcripts& transcripts
 
 	transcripts.buildMappings(header->n_targets, header->target_name, imdName);
 
-	b = bam_init1();
-	b2 = bam_init1();
+	b = bam_init1();                  //Initiate a pointer to bam1_t struct
+	b2 = bam_init1();                 //Initiate a pointer to bam1_t struct
 }
 
 SamParser::~SamParser() {
@@ -115,7 +115,7 @@ SamParser::~SamParser() {
 int SamParser::parseNext(SingleRead& read, SingleHit& hit) {
 	int val; // return value
 
-	if (sam_read1(sam_in, header, b) < 0) return -1;
+	if (sam_read1(sam_in, header, b) < 0) return -1;          //Read one alignment from a SAM file handler and update b
 
 	std::string name = bam_get_canonical_name(b);
 	
@@ -147,7 +147,7 @@ int SamParser::parseNext(SingleRead& read, SingleHit& hit) {
 int SamParser::parseNext(SingleReadQ& read, SingleHit& hit) {
 	int val;
 
-	if (sam_read1(sam_in, header, b) < 0) return -1;
+	if (sam_read1(sam_in, header, b) < 0) return -1;          //Read one alignment from a SAM file handler and update b
 
 	std::string name = bam_get_canonical_name(b);
 	
@@ -180,7 +180,7 @@ int SamParser::parseNext(SingleReadQ& read, SingleHit& hit) {
 int SamParser::parseNext(PairedEndRead& read, PairedEndHit& hit) {
 	int val;
 
-	if ((sam_read1(sam_in, header, b) < 0) || (sam_read1(sam_in, header, b2) < 0)) return -1;
+	if ((sam_read1(sam_in, header, b) < 0) || (sam_read1(sam_in, header, b2) < 0)) return -1;       //Read adjacent alignments and update b and b2
 
 	if (!bam_is_read1(b)) { bam1_t * tmp = b; b = b2; b2 = tmp; }
 	std::string name = bam_get_canonical_name(b);
@@ -224,7 +224,7 @@ int SamParser::parseNext(PairedEndRead& read, PairedEndHit& hit) {
 int SamParser::parseNext(PairedEndReadQ& read, PairedEndHit& hit) {
 	int val;
 	
-	if ((sam_read1(sam_in, header, b) < 0) || (sam_read1(sam_in, header, b2) < 0)) return -1;
+	if ((sam_read1(sam_in, header, b) < 0) || (sam_read1(sam_in, header, b2) < 0)) return -1;        //Read adjacent alignments and update b and b2
 
 	if (!bam_is_read1(b)) { bam1_t *tmp = b; b = b2; b2 = tmp; } // swap if the first read is not read 1
 	std::string name = bam_get_canonical_name(b);
@@ -254,7 +254,15 @@ int SamParser::parseNext(PairedEndReadQ& read, PairedEndHit& hit) {
 	if (readType == 1) {
 	  general_assert(bam_check_cigar(b) && bam_check_cigar(b2), "Read " + name + ": RSEM currently does not support gapped alignments, sorry!");
 	  general_assert(b->core.tid == b2->core.tid, "Read " + name + ": The two mates do not align to a same transcript! RSEM does not support discordant alignments.");
-	  if (bam_is_rev(b)) {
+
+    // finally save alignment information into PairedEndHit
+    // core.tid : chromosome ID, defined by bam_header_t 
+    // core.pos : 0-based leftmost coordinate
+    // core.l_qseq: length of the query sequence (read)
+    // get internal transcript index from the bam target index.
+    // get first pairs left most coordinate
+    // get insert size by calculating second pairs left most coordinate + read length - first pairs left most coordinate 
+	  if (bam_is_rev(b)) {  //the read is mapped to the reverse strand 
 	    hit = PairedEndHit(-transcripts.getInternalSid(b->core.tid + 1), header->target_len[b->core.tid] - b->core.pos - b->core.l_qseq, b->core.pos + b->core.l_qseq - b2->core.pos);
 	  }
 	  else {

@@ -62,7 +62,7 @@ public:
 	//Eid: external sid
 	int getInternalSid(int eid) {
 		assert(eid > 0 && eid <= M);
-		return e2i[eid];
+		return e2i[eid];                    // e2i is the bam target (bam chromosome index from bam header) to transcript mapping (transcript index in file .ti)
 	}
 
 	const Transcript& getTranscriptViaEid(int eid) {
@@ -126,10 +126,10 @@ void Transcripts::buildMappings(int n_targets, char** target_name, const char* i
 		iter = dict.find(std::string(target_name[i]));
 		general_assert(iter != dict.end(), "RSEM can not recognize reference sequence name " + cstrtos(target_name[i]) + "!");
 		general_assert(iter->second > 0, "Reference sequence name " + cstrtos(target_name[i]) + " appears more than once in the SAM/BAM file!");
-		e2i[i + 1] = iter->second;
-		i2e[iter->second] = i + 1;
+		e2i[i + 1] = iter->second;          // e2i is the mapping from bam target (bam hit) index to transcript index 
+		i2e[iter->second] = i + 1;          // i2e is the mapping from transcript index to bam target index
 		iter->second = -1;
-		appeared[e2i[i + 1]] = true;
+		appeared[e2i[i + 1]] = true;        // we have seen the transcript in the bam file
 	}
 
 	if (imdName != NULL) {

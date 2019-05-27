@@ -74,7 +74,7 @@ my $help = 0;
 
 my $paired_end = 0;
 my $no_qual = 0;
-my $keep_intermediate_files = 0;
+my $keep_intermediate_files = 1;
 
 my $bowtie2 = 0;
 my $bowtie2_path = "";
