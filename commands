@@ -1,0 +1,9 @@
+# prepare-reference
+./rsem-prepare-reference --gtf ../TETranscript/gtf/hg19/rmsk_TE.sorted.gtf --bowtie --bowtie-path /data2/han_lab/corinsexton/software/packages/bowtie-1.2.2-linux-x86_64 /data2/han_lab/database/ref/hg19 ref/hg19
+
+
+# bowtie alignment to transcriptome
+/data2/han_lab/corinsexton/software/packages/bowtie-1.2.2-linux-x86_64/bowtie -q --phred33-quals -n 2 -e 99999999 -l 25 -I 1 -X 1000 -p 8 -a -S ref/hg19 -1 test/TCGA-HU-A4GY-11A-825f038a-546d-4108-9452-f53aa07e3b72_1.fastq.dedup.fastq -2 test/TCGA-HU-A4GY-11A-825f038a-546d-4108-9452-f53aa07e3b72_2.fastq.dedup.fastq exp/TCGA-HU-A4GY.transcriptome.sam &> bowtie.transcriptome.log &
+
+# bowtie alignment to genome
+/data2/han_lab/corinsexton/software/packages/bowtie-1.2.2-linux-x86_64/bowtie -q --phred33-quals -n 2 -e 99999999 -l 25 -I 1 -X 1000 -p 8 -a -S ../database/bowtie_index/hg19_bowtie_index -1 test/TCGA-HU-A4GY-11A-825f038a-546d-4108-9452-f53aa07e3b72_1.fastq.dedup.fastq -2 test/TCGA-HU-A4GY-11A-825f038a-546d-4108-9452-f53aa07e3b72_2.fastq.dedup.fastq exp/TCGA-HU-A4GY.genome.sam &> bowtie.genome.log &
