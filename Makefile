@@ -38,11 +38,12 @@ OBJS1 = parseIt.o
 OBJS2 = extractRef.o synthesisRef.o preRef.o buildReadIndex.o wiggle.o tbam2gbam.o bam2wig.o bam2readdepth.o getUnique.o samValidator.o scanForPairedEndReads.o SamHeader.o
 OBJS3 = EM.o Gibbs.o calcCI.o simulation.o
 
-PROGS1 = rsem-extract-reference-transcripts rsem-synthesis-reference-transcripts rsem-preref rsem-build-read-index rsem-simulate-reads
-PROGS2 = rsem-parse-alignments rsem-run-em rsem-tbam2gbam rsem-bam2wig rsem-bam2readdepth rsem-get-unique rsem-sam-validator rsem-scan-for-paired-end-reads
-PROGS3 = rsem-run-gibbs rsem-calculate-credibility-intervals
-
-PROGRAMS = $(PROGS1) $(PROGS2) $(PROGS3)
+#PROGS1 = rsem-extract-reference-transcripts rsem-synthesis-reference-transcripts rsem-preref rsem-build-read-index rsem-simulate-reads
+#PROGS2 = rsem-parse-alignments rsem-run-em rsem-tbam2gbam rsem-bam2wig rsem-bam2readdepth rsem-get-unique rsem-sam-validator rsem-scan-for-paired-end-reads
+#PROGS3 = rsem-run-gibbs rsem-calculate-credibility-intervals
+PROGS4 = rsem-extract-reference-transcripts rsem-preref rsem-build-read-index rsem-parse-alignments  rsem-run-em rsem-tbam2gbam rsem-scan-for-paired-end-reads
+#PROGRAMS = $(PROGS1) $(PROGS2) $(PROGS3)
+PROGRAMS =  $(PROGS4)
 
 # Auxiliary variables for installation
 SCRIPTS = rsem-prepare-reference rsem-calculate-expression rsem-refseq-extract-primary-assembly rsem-gff3-to-gtf rsem-plot-model \
@@ -74,14 +75,17 @@ $(OBJS3) :
 
 
 # Generate executables
-$(PROGS1) :
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+#$(PROGS1) :
+#	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+#
+#$(PROGS2) :
+#	$(CXX) $(LDFLAGS) -pthread -o $@ $^ $(LDLIBS) -lz
+#
+#$(PROGS3) :
+#	$(CXX) $(LDFLAGS) -pthread -o $@ $^ $(LDLIBS)
 
-$(PROGS2) :
+$(PROGS4) :
 	$(CXX) $(LDFLAGS) -pthread -o $@ $^ $(LDLIBS) -lz
-
-$(PROGS3) :
-	$(CXX) $(LDFLAGS) -pthread -o $@ $^ $(LDLIBS)
 
 
 # Dependencies for executables
