@@ -1,3 +1,11 @@
+README for RSTEEM
+
+test files to run RSTEEM can be downloaded from here:
+https://drive.google.com/open?id=1A5j3JcjxRbtJypipDxeUqnfRn3Jcy5L_
+
+the commands to run the programs are found in file commands
+
+
 README for RSEM
 ===============
 
